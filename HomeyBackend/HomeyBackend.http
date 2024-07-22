@@ -1,0 +1,6 @@
+@HomeyBackend_HostAddress = http://localhost:5026
+
+GET {{HomeyBackend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

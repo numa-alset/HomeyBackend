@@ -11,7 +11,7 @@ using System.Security.Claims;
 
 namespace HomeyBackend.Controllers
 {
-    [Route("/api/")]
+    [Route("/api")]
     public class PlaceController : Controller
     {
         private readonly IMapper mapper;

@@ -11,7 +11,9 @@ namespace HomeyBackend.Persistance
         public DbSet<PlaceDetailNumberRooms> PlacesDetailNumbers { get; set; }
         public DbSet<PlaceDetailBoolean>PlaceDetailBooleans { get; set; }
         public DbSet<PlaceImage>PlaceImages { get; set; }
-
+        public DbSet<RateToPlace>RateToPlaces{ get; set; }
+        public DbSet<Rate>Rates{ get; set; }
+        
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

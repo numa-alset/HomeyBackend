@@ -22,6 +22,38 @@ namespace HomeyBackend.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("HomeyBackend.Core.Models.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreateOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<int>("PlaceId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserInfoIdId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlaceId");
+
+                    b.HasIndex("UserInfoIdId");
+
+                    b.ToTable("Comments");
+                });
+
             modelBuilder.Entity("HomeyBackend.Core.Models.Place", b =>
                 {
                     b.Property<int>("Id")
@@ -68,7 +100,7 @@ namespace HomeyBackend.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserInfoId")
+                    b.Property<string>("UserInfo")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -79,7 +111,7 @@ namespace HomeyBackend.Migrations
                     b.HasIndex("PlaceDetailNumberRoomsId")
                         .IsUnique();
 
-                    b.HasIndex("UserInfoId");
+                    b.HasIndex("UserInfo");
 
                     b.ToTable("Places");
                 });
@@ -412,6 +444,21 @@ namespace HomeyBackend.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("HomeyBackend.Core.Models.Comment", b =>
+                {
+                    b.HasOne("HomeyBackend.Core.Models.Place", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("PlaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HomeyBackend.Core.Models.UserInfo", "UserInfo")
+                        .WithMany()
+                        .HasForeignKey("UserInfoIdId");
+
+                    b.Navigation("UserInfo");
+                });
+
             modelBuilder.Entity("HomeyBackend.Core.Models.Place", b =>
                 {
                     b.HasOne("HomeyBackend.Core.Models.PlaceDetailBoolean", "PlaceDetailBoolean")
@@ -428,7 +475,7 @@ namespace HomeyBackend.Migrations
 
                     b.HasOne("HomeyBackend.Core.Models.UserInfo", "UserInfo")
                         .WithMany("Places")
-                        .HasForeignKey("UserInfoId");
+                        .HasForeignKey("UserInfo");
 
                     b.Navigation("PlaceDetailBoolean");
 
@@ -519,6 +566,8 @@ namespace HomeyBackend.Migrations
 
             modelBuilder.Entity("HomeyBackend.Core.Models.Place", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("RateToPlace")
                         .IsRequired();
 

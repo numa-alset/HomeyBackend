@@ -12,7 +12,7 @@ namespace HomeyBackend.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "UserInfoId",
+                name: "UserInfo",
                 table: "Places",
                 type: "nvarchar(450)",
                 nullable: true);
@@ -166,7 +166,7 @@ namespace HomeyBackend.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Places_UserInfoId",
                 table: "Places",
-                column: "UserInfoId");
+                column: "UserInfo");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -210,7 +210,7 @@ namespace HomeyBackend.Migrations
             migrationBuilder.AddForeignKey(
                 name: "FK_Places_AspNetUsers_UserInfoId",
                 table: "Places",
-                column: "UserInfoId",
+                column: "UserInfo",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id");
         }
@@ -248,7 +248,7 @@ namespace HomeyBackend.Migrations
                 table: "Places");
 
             migrationBuilder.DropColumn(
-                name: "UserInfoId",
+                name: "UserInfo",
                 table: "Places");
         }
     }

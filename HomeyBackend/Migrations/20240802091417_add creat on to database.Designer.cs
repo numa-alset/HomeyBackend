@@ -71,7 +71,7 @@ namespace HomeyBackend.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserInfoId")
+                    b.Property<string>("UserInfo")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -82,7 +82,7 @@ namespace HomeyBackend.Migrations
                     b.HasIndex("PlaceDetailNumberRoomsId")
                         .IsUnique();
 
-                    b.HasIndex("UserInfoId");
+                    b.HasIndex("UserInfo");
 
                     b.ToTable("Places");
                 });
@@ -383,7 +383,7 @@ namespace HomeyBackend.Migrations
 
                     b.HasOne("HomeyBackend.Core.Models.UserInfo", "UserInfo")
                         .WithMany("Places")
-                        .HasForeignKey("UserInfoId");
+                        .HasForeignKey("UserInfo");
 
                     b.Navigation("PlaceDetailBoolean");
 

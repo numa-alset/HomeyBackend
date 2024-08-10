@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HomeyBackend.Migrations
 {
     [DbContext(typeof(HomeyBackendDbContext))]
-    [Migration("20240803081716_add rate")]
-    partial class addrate
+    [Migration("20240809093129_updatecomment")]
+    partial class updatecomment
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,38 @@ namespace HomeyBackend.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("HomeyBackend.Core.Models.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreateOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<int>("PlaceId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserInfo")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlaceId");
+
+                    b.HasIndex("UserInfo");
+
+                    b.ToTable("Comments");
+                });
 
             modelBuilder.Entity("HomeyBackend.Core.Models.Place", b =>
                 {
@@ -415,6 +447,21 @@ namespace HomeyBackend.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("HomeyBackend.Core.Models.Comment", b =>
+                {
+                    b.HasOne("HomeyBackend.Core.Models.Place", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("PlaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HomeyBackend.Core.Models.UserInfo", "UserInfo")
+                        .WithMany()
+                        .HasForeignKey("UserInfo");
+
+                    b.Navigation("UserInfo");
+                });
+
             modelBuilder.Entity("HomeyBackend.Core.Models.Place", b =>
                 {
                     b.HasOne("HomeyBackend.Core.Models.PlaceDetailBoolean", "PlaceDetailBoolean")
@@ -522,6 +569,8 @@ namespace HomeyBackend.Migrations
 
             modelBuilder.Entity("HomeyBackend.Core.Models.Place", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("RateToPlace")
                         .IsRequired();
 

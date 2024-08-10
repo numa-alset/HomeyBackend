@@ -22,6 +22,9 @@ namespace HomeyBackend.Mapping
                 .ForMember(pr=>pr.PriceType,opt=>opt.MapFrom(p=>p.PriceType.GetDisplayName()))
                 .ForMember(pr=>pr.Type,opt=>opt.MapFrom(p=>p.Type.GetDisplayName()))
                 ;
+            CreateMap<Comment, CommentResourceShow>()
+                 
+                ;
 
 
 

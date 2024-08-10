@@ -23,11 +23,13 @@ namespace HomeyBackend.Core.Models
         public DateTime CreateOn { get; set; }
         public RateToPlace RateToPlace { get; set; }
         public ICollection<Rate> Rates { get; set; }
+        public ICollection<Comment> Comments { get; set; }
 
         public Place()
         {
             placeImages = new Collection<PlaceImage>();
             Rates = new Collection<Rate>();
+            Comments = new Collection<Comment>();
         }
     }
 

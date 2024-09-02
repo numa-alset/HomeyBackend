@@ -46,7 +46,7 @@ namespace HomeyBackend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Site")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -243,7 +243,7 @@ namespace HomeyBackend.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Site")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -356,13 +356,13 @@ namespace HomeyBackend.Migrations
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Site")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("UserId", "LoginProvider", "Name");
+                    b.HasKey("UserId", "LoginProvider", "Site");
 
                     b.ToTable("AspNetUserTokens", (string)null);
                 });

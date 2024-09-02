@@ -9,10 +9,13 @@ namespace HomeyBackend.Core.Models
         public required String UserPhoto { get; set; }
 
         public ICollection<Place> Places { get; set; }
+        public ICollection<Chat> Chats { get; set; }
+
 
        public UserInfo()
         {
             Places = new Collection<Place>();
+            Chats = new Collection<Chat>();
         }
     }
 }

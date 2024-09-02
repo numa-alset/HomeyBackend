@@ -40,7 +40,7 @@ namespace HomeyBackend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Site")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

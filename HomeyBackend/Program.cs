@@ -11,6 +11,7 @@ using System.Text;
 using HomeyBackend.Persistance.Auth;
 using HomeyBackend.Persistance.Auth.UserRepository;
 using Microsoft.Extensions.FileProviders;
+using HomeyBackend.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +26,7 @@ builder.Services.AddScoped<IPlaceRepository,PlaceRepository>();
 builder.Services.AddScoped<ICommentRepository,CommentRepository>();
 builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 builder.Services.AddScoped<IUserService,UserService>();
-
+builder.Services.AddSignalR();
 var appSettings = builder.Configuration.GetSection("TokenSettings").Get<TokenSettings>() ?? default!;
 builder.Services.AddSingleton(appSettings);
 builder.Services.Configure<PhotoSettings>(builder.Configuration.GetSection("PhotoSettings"));
@@ -107,6 +108,7 @@ builder.Services.AddSwaggerGen(config =>
 
 var app = builder.Build();
 
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -119,10 +121,10 @@ app.UseStaticFiles(new StaticFileOptions()
     FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "photos")),
     RequestPath = new PathString("/photos")
 });
-
+app.UseRouting();
 app.UseCors("webAppRequests");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-
+app.MapHub<ChatHub>("/chatHub");
 app.Run();

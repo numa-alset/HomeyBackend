@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HomeyBackend.Migrations
 {
     [DbContext(typeof(HomeyBackendDbContext))]
-    [Migration("20240729103252_image1")]
-    partial class image1
+    [Migration("20240831213034_chat")]
+    partial class chat
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,6 +25,95 @@ namespace HomeyBackend.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("HomeyBackend.Core.Models.Chat", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("IdReciever")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("LastUpdate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Chats");
+                });
+
+            modelBuilder.Entity("HomeyBackend.Core.Models.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreateOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<int>("PlaceId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserInfoId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlaceId");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("HomeyBackend.Core.Models.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ChatId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreateOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("IdReceiver")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IdSender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChatId");
+
+                    b.ToTable("Messages");
+                });
+
             modelBuilder.Entity("HomeyBackend.Core.Models.Place", b =>
                 {
                     b.Property<int>("Id")
@@ -32,6 +121,11 @@ namespace HomeyBackend.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreateOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -54,17 +148,20 @@ namespace HomeyBackend.Migrations
                     b.Property<float>("Price")
                         .HasColumnType("real");
 
+                    b.Property<int>("PriceType")
+                        .HasColumnType("int");
+
                     b.Property<int>("Rate")
                         .HasColumnType("int");
 
                     b.Property<int>("Size")
                         .HasColumnType("int");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
-                    b.Property<string>("UserInfo")
+                    b.Property<string>("UserInfoId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -75,7 +172,7 @@ namespace HomeyBackend.Migrations
                     b.HasIndex("PlaceDetailNumberRoomsId")
                         .IsUnique();
 
-                    b.HasIndex("UserInfo");
+                    b.HasIndex("UserInfoId");
 
                     b.ToTable("Places");
                 });
@@ -156,6 +253,54 @@ namespace HomeyBackend.Migrations
                     b.HasIndex("PlaceId");
 
                     b.ToTable("PlaceImages");
+                });
+
+            modelBuilder.Entity("HomeyBackend.Core.Models.Rate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PlaceId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserRate")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlaceId");
+
+                    b.ToTable("Rates");
+                });
+
+            modelBuilder.Entity("HomeyBackend.Core.Models.RateToPlace", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("PlaceId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SumOfRates")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalNumberOfRates")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlaceId")
+                        .IsUnique();
+
+                    b.ToTable("RateToPlaces");
                 });
 
             modelBuilder.Entity("HomeyBackend.Core.Models.UserInfo", b =>
@@ -360,6 +505,35 @@ namespace HomeyBackend.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("HomeyBackend.Core.Models.Chat", b =>
+                {
+                    b.HasOne("HomeyBackend.Core.Models.UserInfo", "UserOwn")
+                        .WithMany("Chats")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("UserOwn");
+                });
+
+            modelBuilder.Entity("HomeyBackend.Core.Models.Comment", b =>
+                {
+                    b.HasOne("HomeyBackend.Core.Models.Place", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("PlaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HomeyBackend.Core.Models.Message", b =>
+                {
+                    b.HasOne("HomeyBackend.Core.Models.Chat", "Chat")
+                        .WithMany("Messages")
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Chat");
+                });
+
             modelBuilder.Entity("HomeyBackend.Core.Models.Place", b =>
                 {
                     b.HasOne("HomeyBackend.Core.Models.PlaceDetailBoolean", "PlaceDetailBoolean")
@@ -376,7 +550,9 @@ namespace HomeyBackend.Migrations
 
                     b.HasOne("HomeyBackend.Core.Models.UserInfo", "UserInfo")
                         .WithMany("Places")
-                        .HasForeignKey("UserInfo");
+                        .HasForeignKey("UserInfoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("PlaceDetailBoolean");
 
@@ -392,6 +568,26 @@ namespace HomeyBackend.Migrations
                         .HasForeignKey("PlaceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("HomeyBackend.Core.Models.Rate", b =>
+                {
+                    b.HasOne("HomeyBackend.Core.Models.Place", null)
+                        .WithMany("Rates")
+                        .HasForeignKey("PlaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HomeyBackend.Core.Models.RateToPlace", b =>
+                {
+                    b.HasOne("HomeyBackend.Core.Models.Place", "Place")
+                        .WithOne("RateToPlace")
+                        .HasForeignKey("HomeyBackend.Core.Models.RateToPlace", "PlaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Place");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -445,8 +641,20 @@ namespace HomeyBackend.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("HomeyBackend.Core.Models.Chat", b =>
+                {
+                    b.Navigation("Messages");
+                });
+
             modelBuilder.Entity("HomeyBackend.Core.Models.Place", b =>
                 {
+                    b.Navigation("Comments");
+
+                    b.Navigation("RateToPlace")
+                        .IsRequired();
+
+                    b.Navigation("Rates");
+
                     b.Navigation("placeImages");
                 });
 
@@ -464,6 +672,8 @@ namespace HomeyBackend.Migrations
 
             modelBuilder.Entity("HomeyBackend.Core.Models.UserInfo", b =>
                 {
+                    b.Navigation("Chats");
+
                     b.Navigation("Places");
                 });
 #pragma warning restore 612, 618

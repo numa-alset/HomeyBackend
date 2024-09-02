@@ -14,6 +14,8 @@ namespace HomeyBackend.Persistance
         public DbSet<RateToPlace>RateToPlaces{ get; set; }
         public DbSet<Rate>Rates{ get; set; }
         public DbSet<Comment>Comments{ get; set; }
+        public DbSet<Chat>Chats { get; set; }
+        public DbSet<Message> Messages { get; set; }
         
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -24,6 +26,10 @@ namespace HomeyBackend.Persistance
             builder.Entity<Comment>()
                 .Property(p => p.CreateOn)
                 .HasDefaultValueSql("GETUTCDATE()");
+            builder.Entity<Place>()
+                .HasOne(p=>p.UserInfo).WithMany(p=>p.Places).HasForeignKey(p=>p.UserInfoId);
+            builder.Entity<Place>()
+                .Navigation(p=>p.UserInfo);
 
         }
 

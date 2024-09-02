@@ -22,6 +22,31 @@ namespace HomeyBackend.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("HomeyBackend.Core.Models.Chat", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("IdReciever")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("LastUpdate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Chats");
+                });
+
             modelBuilder.Entity("HomeyBackend.Core.Models.Comment", b =>
                 {
                     b.Property<int>("Id")
@@ -42,16 +67,48 @@ namespace HomeyBackend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserInfoIdId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("UserInfoId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PlaceId");
 
-                    b.HasIndex("UserInfoIdId");
-
                     b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("HomeyBackend.Core.Models.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ChatId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreateOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("IdReceiver")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IdSender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChatId");
+
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("HomeyBackend.Core.Models.Place", b =>
@@ -75,7 +132,7 @@ namespace HomeyBackend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Site")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -100,7 +157,8 @@ namespace HomeyBackend.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserInfo")
+                    b.Property<string>("UserInfoId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -111,7 +169,7 @@ namespace HomeyBackend.Migrations
                     b.HasIndex("PlaceDetailNumberRoomsId")
                         .IsUnique();
 
-                    b.HasIndex("UserInfo");
+                    b.HasIndex("UserInfoId");
 
                     b.ToTable("Places");
                 });
@@ -320,7 +378,7 @@ namespace HomeyBackend.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Site")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -433,15 +491,24 @@ namespace HomeyBackend.Migrations
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Site")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("UserId", "LoginProvider", "Name");
+                    b.HasKey("UserId", "LoginProvider", "Site");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("HomeyBackend.Core.Models.Chat", b =>
+                {
+                    b.HasOne("HomeyBackend.Core.Models.UserInfo", "UserOwn")
+                        .WithMany("Chats")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("UserOwn");
                 });
 
             modelBuilder.Entity("HomeyBackend.Core.Models.Comment", b =>
@@ -451,12 +518,17 @@ namespace HomeyBackend.Migrations
                         .HasForeignKey("PlaceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
 
-                    b.HasOne("HomeyBackend.Core.Models.UserInfo", "UserInfo")
-                        .WithMany()
-                        .HasForeignKey("UserInfoIdId");
+            modelBuilder.Entity("HomeyBackend.Core.Models.Message", b =>
+                {
+                    b.HasOne("HomeyBackend.Core.Models.Chat", "Chat")
+                        .WithMany("Messages")
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("UserInfo");
+                    b.Navigation("Chat");
                 });
 
             modelBuilder.Entity("HomeyBackend.Core.Models.Place", b =>
@@ -475,7 +547,9 @@ namespace HomeyBackend.Migrations
 
                     b.HasOne("HomeyBackend.Core.Models.UserInfo", "UserInfo")
                         .WithMany("Places")
-                        .HasForeignKey("UserInfo");
+                        .HasForeignKey("UserInfoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("PlaceDetailBoolean");
 
@@ -564,6 +638,11 @@ namespace HomeyBackend.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("HomeyBackend.Core.Models.Chat", b =>
+                {
+                    b.Navigation("Messages");
+                });
+
             modelBuilder.Entity("HomeyBackend.Core.Models.Place", b =>
                 {
                     b.Navigation("Comments");
@@ -590,6 +669,8 @@ namespace HomeyBackend.Migrations
 
             modelBuilder.Entity("HomeyBackend.Core.Models.UserInfo", b =>
                 {
+                    b.Navigation("Chats");
+
                     b.Navigation("Places");
                 });
 #pragma warning restore 612, 618

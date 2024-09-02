@@ -40,11 +40,13 @@ namespace HomeyBackend.Persistance.Auth.UserRepository
               .ToList();
 
             claims.AddRange(roleClaims);
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
 
             var token = TokenUtil.GetToken(_tokenSettings, user, claims);
             await _userManager.RemoveAuthenticationTokenAsync(user, "REFRESHTOKENPROVIDER", "RefreshToken");
             var refreshToken = await _userManager.GenerateUserTokenAsync(user, "REFRESHTOKENPROVIDER", "RefreshToken");
             await _userManager.SetAuthenticationTokenAsync(user, "REFRESHTOKENPROVIDER", "RefreshToken", refreshToken);
+            
             return new UserLoginResponse() { AccessToken = token, RefreshToken = refreshToken };
         }
     }

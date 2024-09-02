@@ -64,7 +64,7 @@ namespace HomeyBackend.Persistance
 
               var columnsMap = new Dictionary<SortBy, Expression<Func<Place, object>>>()
               {
-                  [SortBy.Name] = p => p.Name,
+                  [SortBy.Name] = p => p.Site,
                   [SortBy.Datetime] = v => v.CreateOn,
 
               };
@@ -97,7 +97,7 @@ namespace HomeyBackend.Persistance
                .Include(p => p.UserInfo)
                .Include(p => p.placeImages)
                .AsQueryable();
-           query= query.Where(e=>e.Name.Contains(name));
+           query= query.Where(e=>e.Site.Contains(name));
             return await query.ToListAsync();
         }
     }
